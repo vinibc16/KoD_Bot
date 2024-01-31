@@ -32,13 +32,7 @@ client.on("messageCreate", async (message) => {
             console.log("Contrato: "+collInfo);
             await message.reply("Contrato: "+collInfo)
         } else if (commandId === "rank") {
-            const nft = await moduleColl.queryContractSmart(param1, {
-                owner_of: {
-                    token_id: 253
-                }
-            });
-            console.log("DEBUG 1")
-            console.log(nft)
+            null;
         }
     } catch(e) {
         console.log(e)

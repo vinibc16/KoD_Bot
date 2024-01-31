@@ -29,10 +29,6 @@ class Trait {
 
 async function getRarity(collection : string, token_id? : string) {
     const nfts : Nft[] = await calcRarity(collection,token_id);
-    console.log("NÃO Ordernado: "+nfts.length)
-    for(let i=1; i<nfts.length-1; i++) {
-        console.log(" Raridade: "+nfts[i].rarity+" - NFT: "+nfts[i].id)
-    }
     const sortedNfts : Nft[] = nfts.sort((n1,n2) => {
         if (n1.rarity > n2.rarity) {
             return -1;
@@ -45,7 +41,7 @@ async function getRarity(collection : string, token_id? : string) {
         return 0;
     });
     console.log("Ordernado: "+sortedNfts.length)
-    for(let i=1; i<sortedNfts.length-1; i++) {
+    for(let i=0; i<sortedNfts.length; i++) {
         console.log(" Raridade: "+sortedNfts[i].rarity+" - NFT: "+sortedNfts[i].id)
     }
 }
@@ -155,10 +151,6 @@ async function getAttributes(nfts : Nft[]) : Promise<Nft[]> {
                     attributes = []
                     for(let j=0; j<data.attributes.length; j++) {
                         attributes[j] = new Trait(data.attributes[j].trait_type,data.attributes[j].value)
-                    }
-                    if (i.toString() == "50") {
-                        console.log("NFT: "+i.toString()+"");
-                        console.log(attributes)
                     }
                     nfts[i.toString()].traits = attributes
                 } else {
