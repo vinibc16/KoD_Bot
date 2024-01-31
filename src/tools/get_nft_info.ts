@@ -40,8 +40,13 @@ async function getRarity(collection : string, token_id? : string) {
     
         return 0;
     });
-    console.log("Ordernado: "+sortedNfts.length)
-    for(let i=0; i<sortedNfts.length; i++) {
+    let range
+    if(sortedNfts.length >= 200) {
+        range = 200
+    } else {
+        range = sortedNfts.length
+    }
+    for(let i=0; i<range; i++) {
         console.log(" Raridade: "+sortedNfts[i].rarity+" - NFT: "+sortedNfts[i].id)
     }
 }
