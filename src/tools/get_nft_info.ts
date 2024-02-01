@@ -183,8 +183,8 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                     }
                     resolve(); // Resolvendo a promessa
                 } catch (error) {                    
-                    console.error('Ocorreu um erro ao recuperar os attributes:', error);
-                    reject(error); // Rejeitando a promessa com o erro
+                    console.error('Ocorreu um erro ao recuperar os attributes:');
+                    //reject(error); // Rejeitando a promessa com o erro
                     return null
                 }
             });
