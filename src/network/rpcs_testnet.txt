@@ -1,1 +1,0 @@
-https://sei-testnet-2-rpc.brocha.in:443
