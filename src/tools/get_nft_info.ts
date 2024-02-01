@@ -13,6 +13,7 @@ class Nft {
     id : string
     traits : Trait[]
     rarity : number
+    rank : number
 
     constructor(p_id : string, p_traits : Trait[]) {
         this.id = p_id
@@ -31,8 +32,8 @@ class Trait {
     }
 }
 
-async function getRarity(collection : string, token_id? : string) {
-    const nfts : Nft[] = await calcRarity(collection,token_id);
+async function getRarity(collection : string) : Promise<Nft[]> {
+    const nfts : Nft[] = await calcRarity(collection);
     const sortedNfts : Nft[] = nfts.sort((n1,n2) => {
         if (n1.rarity > n2.rarity) {
             return -1;
@@ -43,7 +44,23 @@ async function getRarity(collection : string, token_id? : string) {
         }
     
         return 0;
-    });
+    });    
+    let rank : number
+    let lastRatiry : number
+    for(let i=0; i<=sortedNfts.length; i++) {
+        if(typeof sortedNfts[i] != "undefined") {
+            if(i == 0) {
+                rank = 1
+                sortedNfts[i].rank = 1
+            } else if(sortedNfts[i].rarity === lastRatiry) {
+                sortedNfts[i].rank = rank
+            } else {
+                rank++
+                sortedNfts[i].rank = rank
+            }
+            lastRatiry = sortedNfts[i].rarity
+        }
+    }
     let range
     if(sortedNfts.length >= 200) {
         range = 200
@@ -51,11 +68,12 @@ async function getRarity(collection : string, token_id? : string) {
         range = sortedNfts.length
     }
     for(let i=0; i<range; i++) {
-        console.log(" Rank: "+i+" - NFT: "+sortedNfts[i].id)
+        console.log(" Rank: "+sortedNfts[i].rank+" - NFT: "+sortedNfts[i].id)
     }
+    return sortedNfts    
 }
 
-async function calcRarity(collection : string, token_id? : string) : Promise<Nft[]> {
+async function calcRarity(collection : string) : Promise<Nft[]> {
     try {
         const supply = await querySupply(collection)
         console.log("Inicando recuperação da coleção")
@@ -63,52 +81,31 @@ async function calcRarity(collection : string, token_id? : string) : Promise<Nft
         console.log("Token URI: "+tokenUri)
         console.log("Fim recuperação da coleção")
         console.log("Inicando recuperação dos Atributos")
+        console.log("Supply: "+supply)
         let nfts : Nft[] = await getAttributes(tokenUri,supply,10);
         console.log("Fim recuperação dos Atributos")
         let traitRatiry : number = 0;
         const totalNfts = nfts.length - 1
         console.log("Inicio do calculo da raridade")
         // LOOP DE TODOS OS NFTS
-        if(!token_id) {
-            for (let i=1; i<nfts.length; i++) {
-                console.log("NFT: "+nfts[i].id);
-                // LOOP DE TODOS OS TRAITS DOS NFTS
-                for(let j=0; j<nfts[i].traits.length; j++) {
-                    traitRatiry = 0;
-                    //console.log("Trait Name: "+nfts[i].traits[j].traitName+" === Trait Value: "+nfts[i].traits[j].traitvalue)    
-                    // LOOP DE TODOS OS NFTS PARA COMPRAR COM O ANTERIOR         
-                    for(let k=1; k<nfts.length; k++) {
-                        //LOOP DE TODOS OS TRARIS DOS NFTS COMPARAVEIS
-                        for(let l=0; l<nfts[k].traits.length; l++) {
-                            if (nfts[i].traits[j].traitName === nfts[k].traits[l].traitName &&
-                                nfts[i].traits[j].traitvalue === nfts[k].traits[l].traitvalue) {
-                                traitRatiry++;
-                            }
-                        }
-                    }
-                    nfts[i].rarity = nfts[i].rarity + (1 / (traitRatiry / totalNfts))
-                }
-                nfts[i].rarity = nfts[i].rarity / nfts[i].traits.length
-            }
-        } else {
-            console.log("NFT: "+nfts[token_id].id);
+        for (let i=1; i<nfts.length; i++) {
             // LOOP DE TODOS OS TRAITS DOS NFTS
-            for(let j=0; j<nfts[token_id].traits.length; j++) {
+            for(let j=0; j<nfts[i].traits.length; j++) {
                 traitRatiry = 0;
                 //console.log("Trait Name: "+nfts[i].traits[j].traitName+" === Trait Value: "+nfts[i].traits[j].traitvalue)    
                 // LOOP DE TODOS OS NFTS PARA COMPRAR COM O ANTERIOR         
                 for(let k=1; k<nfts.length; k++) {
                     //LOOP DE TODOS OS TRARIS DOS NFTS COMPARAVEIS
                     for(let l=0; l<nfts[k].traits.length; l++) {
-                        if (nfts[token_id].traits[j].traitName === nfts[k].traits[l].traitName &&
-                            nfts[token_id].traits[j].traitvalue === nfts[k].traits[l].traitvalue) {
+                        if (nfts[i].traits[j].traitName === nfts[k].traits[l].traitName &&
+                            nfts[i].traits[j].traitvalue === nfts[k].traits[l].traitvalue) {
                             traitRatiry++;
                         }
                     }
                 }
-                nfts[token_id].rarity = nfts[token_id].rarity + (1 / (traitRatiry / totalNfts))
+                nfts[i].rarity = nfts[i].rarity + (1 / (traitRatiry / totalNfts))
             }
-            nfts[token_id].rarity = nfts[token_id].rarity / nfts[token_id].traits.length;
+            nfts[i].rarity = nfts[i].rarity
         }
         return nfts;       
     } catch(e){
@@ -154,7 +151,7 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
         // Array para armazenar todas as promessas de solicitação HTTP
         const axiosPromises: Promise<any>[] = [];
 
-        for (let i = 1; i < supply; i++) {
+        for (let i = 1; i <=supply; i++) {
             const url = `${tokenUri}/${i}`;
 
             // Criando a promessa de solicitação HTTP com um atraso
@@ -169,7 +166,6 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                                 new Trait(attribute.trait_type, attribute.value)
                             );
                             nfts[i.toString()] = new Nft(i.toString(), attributes);
-                            console.log(`NFT: ${i.toString()}`);
                         } else {
                             console.error('A resposta não contém o array de attributes');
                             reject(new Error('A resposta não contém o array de attributes'));
@@ -202,6 +198,6 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
     }
 }
 
-//getRarity("sei1dr8skknjpn58lnneqw6ahmnddzgl0veyteld0p73f6zzm52r38gs3e3mrd");
+getRarity("sei1dr8skknjpn58lnneqw6ahmnddzgl0veyteld0p73f6zzm52r38gs3e3mrd");
 
 module.exports = { getRarity };
