@@ -161,6 +161,7 @@ async function getAttributes(tokenUri : string, supply : number) : Promise<Nft[]
                         attributes[j] = new Trait(data.attributes[j].trait_type,data.attributes[j].value)
                     }
                     nfts[i.toString()] = new Nft(i.toString(),attributes)
+                    console.log("NFT: "+i.toString())
                 } else {
                     console.error('A resposta não contém o array de attributes');
                     throw new Error('A resposta não contém o array de attributes');
