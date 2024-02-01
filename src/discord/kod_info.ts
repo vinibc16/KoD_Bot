@@ -110,7 +110,7 @@ client.on("messageCreate", async (message) => {
                     message.reply({embeds: [exampleEmbed]});
                     //await message.reply("Lista de lendários ordenada: "+lendarios)
                 } catch(e) {
-                    await message.reply("Erro em recuperar a coelação. Verifique se a coleção existe.")
+                    await message.reply("Erro genérico. Entre em contato com o DEV")
                 }                
             }            
         }
