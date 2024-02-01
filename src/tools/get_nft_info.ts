@@ -172,7 +172,6 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                     }
                     if (response) {
                         if (response.status === 200) {
-                            console.log("entrou")
                             const data = response.data;
                             if (data && Array.isArray(data.attributes)) {
                                 const attributes: Trait[] = data.attributes.map((attribute: any) =>
