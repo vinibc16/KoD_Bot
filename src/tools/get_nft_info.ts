@@ -93,6 +93,7 @@ async function calcRarity(collection : string) : Promise<Nft[]> {
             console.log("Inicio do calculo da raridade")
             // LOOP DE TODOS OS NFTS
             for (let i=1; i<nfts.length; i++) {
+                console.log("Calculando raridade NFT: "+i)
                 // LOOP DE TODOS OS TRAITS DOS NFTS
                 for(let j=0; j<nfts[i].traits.length; j++) {
                     traitRatiry = 0;
@@ -171,6 +172,7 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                                 new Trait(attribute.trait_type, attribute.value)
                             );
                             nfts[i.toString()] = new Nft(i.toString(), attributes);
+                            console.log("Atributo recuperado NFT: "+i.toString())
                         } else {
                             console.error('A resposta não contém o array de attributes');
                             reject(new Error('A resposta não contém o array de attributes'));
