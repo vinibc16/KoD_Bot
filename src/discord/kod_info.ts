@@ -95,19 +95,19 @@ client.on("messageCreate", async (message) => {
                     exampleEmbed.setTitle("Lista de Lendários")
                     for(let i=0; i<nfts.length; i++) {
                         if(nfts[i].rank <100){
-                            if(!lendarios) {
+                            /*if(!lendarios) {
                                 lendarios = nfts[i].id
                             } else {
                                 lendarios = lendarios + " " + nfts[i].id
-                                exampleEmbed.addFields (
-                                    { name: "Rank:"+nfts[i].rank, value: "NFT:"+nfts[i].id, inline: true }
-                                )
-                            }
-                            
+                            }*/
+                            exampleEmbed.addFields (
+                                { name: "Rank:"+nfts[i].rank, value: "NFT:"+nfts[i].id, inline: true }
+                            )
                         } else {
                             break;
                         }                
                     }
+                    message.reply({embeds: [exampleEmbed]});
                     //await message.reply("Lista de lendários ordenada: "+lendarios)
                 } catch(e) {
                     await message.reply("Erro em recuperar a coelação. Verifique se a coleção existe.")
