@@ -93,24 +93,26 @@ client.on("messageCreate", async (message) => {
                         await message.reply("Erro em recuperar a coelação.")
                     }
                     exampleEmbed.setTitle("Lista de Lendários")
+                    console.log("debug 1")
                     for(let i=0; i<nfts.length; i++) {
                         if(nfts[i].rank <100){
-                            /*if(!lendarios) {
+                            if(!lendarios) {
                                 lendarios = nfts[i].id
                             } else {
                                 lendarios = lendarios + " " + nfts[i].id
-                            }*/
-                            exampleEmbed.addFields (
-                                { name: "Rank:"+nfts[i].rank, value: "NFT:"+nfts[i].id, inline: true }
-                            )
+                            }
                         } else {
                             break;
                         }                
                     }
+                    exampleEmbed.addFields (
+                        { name: "", value: ""+lendarios, inline: true }
+                    )
+                    console.log("debug 2")
                     message.reply({embeds: [exampleEmbed]});
                     //await message.reply("Lista de lendários ordenada: "+lendarios)
                 } catch(e) {
-                    await message.reply("Erro genérico. Entre em contato com o DEV")
+                    await message.reply("Erro genérico. Entre em contato com o DEV. "+e)
                 }                
             }            
         }
