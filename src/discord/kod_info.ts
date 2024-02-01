@@ -63,7 +63,7 @@ client.on("messageCreate", async (message) => {
             for(let i=0; i<contract.mint_groups.length; i++) {
                 const count = await _get_collection.getWlCount(param1,contract.mint_groups[i].name)
                 console.log()
-                if (contract.mint_groups[i].merkle_root) {
+                if (contract.mint_groups[i].merkle_root && count > 0) {
                     exampleEmbed.addFields (
                         { name: contract.mint_groups[i].name, value: ""+count, inline: false }
                     )
