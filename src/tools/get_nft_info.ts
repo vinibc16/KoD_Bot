@@ -178,7 +178,7 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                                     new Trait(attribute.trait_type, attribute.value)
                                 );
                                 nfts[i.toString()] = new Nft(i.toString(), attributes);
-                                //console.log("Atributo recuperado NFT: "+i.toString())
+                                console.log("Atributo recuperado NFT: "+i.toString())
                             } else {
                                 console.error('A resposta não contém o array de attributes');
                                 reject(new Error('A resposta não contém o array de attributes'));
