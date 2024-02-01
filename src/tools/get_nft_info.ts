@@ -6,14 +6,13 @@ const moduleNetwork = require('../network/network');
 
 class Nft {
     id : string
-    tokenUri : string
     traits : Trait[]
     rarity : number
 
-    constructor(p_id : string, p_tokenUri : string) {
+    constructor(p_id : string, p_traits : Trait[]) {
         this.id = p_id
-        this.tokenUri = p_tokenUri
         this.rarity = 0
+        this.traits = p_traits
     }
 }
 
@@ -47,17 +46,19 @@ async function getRarity(collection : string, token_id? : string) {
         range = sortedNfts.length
     }
     for(let i=0; i<range; i++) {
-        console.log(" Raridade: "+sortedNfts[i].rarity+" - NFT: "+sortedNfts[i].id)
+        console.log(" Rank: "+i+" - NFT: "+sortedNfts[i].id)
     }
 }
 
 async function calcRarity(collection : string, token_id? : string) : Promise<Nft[]> {
     try {
+        const supply = await querySupply(collection)
         console.log("Inicando recuperação da coleção")
-        let seiNfts : any[] = await queryCollection(collection);
+        let tokenUri = await queryCollection(collection);
+        console.log("Token URI: "+tokenUri)
         console.log("Fim recuperação da coleção")
         console.log("Inicando recuperação dos Atributos")
-        let nfts : Nft[] = await getAttributes(seiNfts);
+        let nfts : Nft[] = await getAttributes(tokenUri,supply);
         console.log("Fim recuperação dos Atributos")
         let traitRatiry : number = 0;
         const totalNfts = nfts.length - 1
@@ -110,46 +111,48 @@ async function calcRarity(collection : string, token_id? : string) : Promise<Nft
     }    
 }
 
-async function queryCollection (collection: string) : Promise<Nft[]> {    
+async function queryCollection (collection: string) {    
     try {
-        let nfts : Nft[] = []
+        let coll : any
         const signingClient = await CosmWasmClient.connect(moduleNetwork.getRpcs()[0]);
-        const supply = await signingClient.queryContractSmart(collection, {
-            num_tokens: { }
-        });
-        console.log("Supply: "+supply.count)
-        let nft
-        for(let i=1; i<=supply.count; i++) { // MUDAR O SUPPLY
-            try {
-                nft = await signingClient.queryContractSmart(collection, {
-                    nft_info: {
-                        token_id: i.toString()
-                    }
-                });
-            } catch(e) {
-                null;
-            }
-            console.log("NFT: "+i.toString())
-            nfts[i] = new Nft(i.toString(),nft.token_uri);
-        } 
-        return nfts
+        try {
+            coll = await signingClient.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { get_collection: { collection: collection }});
+        } catch(e){
+            return "Coleção não existe"
+        }
+        return coll.token_uri
     } catch(e){
         throw e;
     }
 }
 
-async function getAttributes(nfts : Nft[]) : Promise<Nft[]> {
+async function querySupply (collection: string) {    
+    try {
+        let coll : any
+        const signingClient = await CosmWasmClient.connect(moduleNetwork.getRpcs()[0]);
+        try {
+            coll = await signingClient.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { get_collection: { collection: collection }});
+        } catch(e){
+            return "Coleção não existe"
+        }
+        return coll.supply
+    } catch(e){
+        throw e;
+    }
+}
+
+async function getAttributes(tokenUri : string, supply : number) : Promise<Nft[]> {
     try {
         let attributes : Trait[] = []
-        
-        for(let i=1; i<nfts.length; i++) {            
+        let nfts : Nft[] = []
+        for(let i=1; i<supply; i++) {            
             // Fazendo a requisição HTTP para a URL fornecida
-            const response = await axios.get(nfts[i].tokenUri);
+            const url = tokenUri+"/"+i
+            const response = await axios.get(url);
             // Verificando se a resposta foi bem sucedida
             if (response.status === 200) {
                 // Obtendo o objeto JSON da resposta
                 const data = response.data;
-
                 // Verificando se o objeto tem a chave 'attributes' e se é um array
                 if (data && Array.isArray(data.attributes)) {
                     // Retornando o array de attributes
@@ -157,7 +160,7 @@ async function getAttributes(nfts : Nft[]) : Promise<Nft[]> {
                     for(let j=0; j<data.attributes.length; j++) {
                         attributes[j] = new Trait(data.attributes[j].trait_type,data.attributes[j].value)
                     }
-                    nfts[i.toString()].traits = attributes
+                    nfts[i.toString()] = new Nft(i.toString(),attributes)
                 } else {
                     console.error('A resposta não contém o array de attributes');
                     throw new Error('A resposta não contém o array de attributes');
@@ -174,6 +177,6 @@ async function getAttributes(nfts : Nft[]) : Promise<Nft[]> {
     }    
 }
 
-getRarity("sei1szeectun8vjjn6s054srn9dewh0qw6ys9vsl9wnem7edzuv2ympsemgyyf");
+getRarity("sei1dr8skknjpn58lnneqw6ahmnddzgl0veyteld0p73f6zzm52r38gs3e3mrd");
 
 module.exports = { getRarity };
