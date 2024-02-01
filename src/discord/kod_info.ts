@@ -43,7 +43,7 @@ client.once(Events.ClientReady, c=> {
 
 client.on("messageCreate", async (message) => {
     //console.debug("START DEBUG")
-    console.log(message.channelId);    
+    //console.log(message.channelId);    
     //console.debug("END DEBUG")
     if (!message.content.startsWith(prefixo) || message.author.bot || !message.guild || message.channelId != "1202616180461015161") return
 
