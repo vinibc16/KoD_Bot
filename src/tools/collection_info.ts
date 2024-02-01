@@ -11,7 +11,7 @@ const queryCollection = async (collection: string) => {
         const client = await SigningCosmWasmClient.connectWithSigner(moduleNetwork.getRpcs()[0], moduleWallets[0]);
         let codes : any
         let coll : any 
-                
+                 
         try {
             coll = await client.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { get_collection: { collection: collection }});
         } catch(e){
@@ -25,6 +25,6 @@ const queryCollection = async (collection: string) => {
     }
 }
 
-queryCollection("sei1gn3lg0wfaxvwg2tmktkurs2h2uw6f5z06spwtdeg0eh0qde5uksslhfgcp")
+//queryCollection("sei1gn3lg0wfaxvwg2tmktkurs2h2uw6f5z06spwtdeg0eh0qde5uksslhfgcp")
 
 export { queryCollection }

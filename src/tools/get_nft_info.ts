@@ -61,55 +61,60 @@ async function getRarity(collection : string) : Promise<Nft[]> {
             lastRatiry = sortedNfts[i].rarity
         }
     }
-    let range
+    /*let range
     if(sortedNfts.length >= 200) {
         range = 200
     } else {
         range = sortedNfts.length
-    }
-    for(let i=0; i<range; i++) {
+    }*/
+    /*for(let i=0; i<range; i++) {
         console.log(" Rank: "+sortedNfts[i].rank+" - NFT: "+sortedNfts[i].id)
-    }
+    }*/
+    console.log("Finalizado Get Ratiry")
     return sortedNfts    
 }
 
 async function calcRarity(collection : string) : Promise<Nft[]> {
     try {
+        console.log(collection)
         const supply = await querySupply(collection)
-        console.log("Inicando recuperação da coleção")
-        let tokenUri = await queryCollection(collection);
-        console.log("Token URI: "+tokenUri)
-        console.log("Fim recuperação da coleção")
-        console.log("Inicando recuperação dos Atributos")
-        console.log("Supply: "+supply)
-        let nfts : Nft[] = await getAttributes(tokenUri,supply,10);
-        console.log("Fim recuperação dos Atributos")
-        let traitRatiry : number = 0;
-        const totalNfts = nfts.length - 1
-        console.log("Inicio do calculo da raridade")
-        // LOOP DE TODOS OS NFTS
-        for (let i=1; i<nfts.length; i++) {
-            // LOOP DE TODOS OS TRAITS DOS NFTS
-            for(let j=0; j<nfts[i].traits.length; j++) {
-                traitRatiry = 0;
-                //console.log("Trait Name: "+nfts[i].traits[j].traitName+" === Trait Value: "+nfts[i].traits[j].traitvalue)    
-                // LOOP DE TODOS OS NFTS PARA COMPRAR COM O ANTERIOR         
-                for(let k=1; k<nfts.length; k++) {
-                    //LOOP DE TODOS OS TRARIS DOS NFTS COMPARAVEIS
-                    for(let l=0; l<nfts[k].traits.length; l++) {
-                        if (nfts[i].traits[j].traitName === nfts[k].traits[l].traitName &&
-                            nfts[i].traits[j].traitvalue === nfts[k].traits[l].traitvalue) {
-                            traitRatiry++;
+        let nfts : Nft[]
+        if(supply != "0") {
+            console.log("Inicando recuperação da coleção")
+            let tokenUri = await queryCollection(collection);
+            console.log("Token URI: "+tokenUri)
+            console.log("Fim recuperação da coleção")
+            console.log("Inicando recuperação dos Atributos")
+            console.log("Supply: "+supply)
+            nfts = await getAttributes(tokenUri,supply,10);
+            console.log("Fim recuperação dos Atributos")
+            let traitRatiry : number = 0;
+            const totalNfts = nfts.length - 1
+            console.log("Inicio do calculo da raridade")
+            // LOOP DE TODOS OS NFTS
+            for (let i=1; i<nfts.length; i++) {
+                // LOOP DE TODOS OS TRAITS DOS NFTS
+                for(let j=0; j<nfts[i].traits.length; j++) {
+                    traitRatiry = 0;
+                    //console.log("Trait Name: "+nfts[i].traits[j].traitName+" === Trait Value: "+nfts[i].traits[j].traitvalue)    
+                    // LOOP DE TODOS OS NFTS PARA COMPRAR COM O ANTERIOR         
+                    for(let k=1; k<nfts.length; k++) {
+                        //LOOP DE TODOS OS TRARIS DOS NFTS COMPARAVEIS
+                        for(let l=0; l<nfts[k].traits.length; l++) {
+                            if (nfts[i].traits[j].traitName === nfts[k].traits[l].traitName &&
+                                nfts[i].traits[j].traitvalue === nfts[k].traits[l].traitvalue) {
+                                traitRatiry++;
+                            }
                         }
                     }
+                    nfts[i].rarity = nfts[i].rarity + (1 / (traitRatiry / totalNfts))
                 }
-                nfts[i].rarity = nfts[i].rarity + (1 / (traitRatiry / totalNfts))
+                nfts[i].rarity = nfts[i].rarity
             }
-            nfts[i].rarity = nfts[i].rarity
-        }
+        }        
         return nfts;       
     } catch(e){
-        console.log(e);
+        console.log("Erro em recuperar coelação.");
     }    
 }
 
@@ -135,7 +140,7 @@ async function querySupply (collection: string) {
         try {
             coll = await signingClient.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { get_collection: { collection: collection }});
         } catch(e){
-            return "Coleção não existe"
+            return "0"
         }
         return coll.supply
     } catch(e){
@@ -175,9 +180,10 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
                         reject(new Error(`Erro ao fazer a requisição: ${response.statusText}`));
                     }
                     resolve(); // Resolvendo a promessa
-                } catch (error) {
+                } catch (error) {                    
                     console.error('Ocorreu um erro ao recuperar os attributes:', error);
                     reject(error); // Rejeitando a promessa com o erro
+                    return null
                 }
             });
 
@@ -198,6 +204,6 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
     }
 }
 
-getRarity("sei1dr8skknjpn58lnneqw6ahmnddzgl0veyteld0p73f6zzm52r38gs3e3mrd");
+//getRarity("sei1dr8skknjpn58lnneqw6ahmnddzgl0veyteld0p73f6zzm52r38gs3e3mrd");
 
 module.exports = { getRarity };

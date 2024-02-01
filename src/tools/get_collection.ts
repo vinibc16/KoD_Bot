@@ -18,7 +18,7 @@ async function retrieveAndFilterData(siteUrl: string) {
         // Chamando a função para extrair e filtrar os dados
         return extractAndFilterData(fileResponse.data);
     } catch (error) {
-        console.error(`Erro ao recuperar e filtrar os dados do arquivo JavaScript:`, error);
+        console.log('Erro ao recuperar e filtrar os dados do site');
     }
 }
 
@@ -39,7 +39,12 @@ function extractAndFilterData(jsFileContent: string) {
     }
 }
 async function getMintCollection(url : string) {
-    const retorno = await retrieveAndFilterData(url)
+    let retorno
+    try {
+        retorno = await retrieveAndFilterData(url)
+    } catch(e) {
+        retorno = "Erro ao recuperar a coleção."
+    }    
     return retorno
 }
 
