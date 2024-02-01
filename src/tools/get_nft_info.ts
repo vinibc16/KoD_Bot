@@ -93,7 +93,7 @@ async function calcRarity(collection : string) : Promise<Nft[]> {
             console.log("Inicio do calculo da raridade")
             // LOOP DE TODOS OS NFTS
             for (let i=1; i<nfts.length; i++) {
-                console.log("Calculando raridade NFT: "+i)
+                //console.log("Calculando raridade NFT: "+i)
                 // LOOP DE TODOS OS TRAITS DOS NFTS
                 for(let j=0; j<nfts[i].traits.length; j++) {
                     traitRatiry = 0;
@@ -164,26 +164,34 @@ async function getAttributes(tokenUri: string, supply: number, delayMs: number):
             const promiseWithDelay = new Promise<void>(async (resolve, reject) => {
                 try {
                     // Fazendo a solicitação HTTP
-                    const response = await axios.get(url);
-                    if (response.status === 200) {
-                        const data = response.data;
-                        if (data && Array.isArray(data.attributes)) {
-                            const attributes: Trait[] = data.attributes.map((attribute: any) =>
-                                new Trait(attribute.trait_type, attribute.value)
-                            );
-                            nfts[i.toString()] = new Nft(i.toString(), attributes);
-                            console.log("Atributo recuperado NFT: "+i.toString())
-                        } else {
-                            console.error('A resposta não contém o array de attributes');
-                            reject(new Error('A resposta não contém o array de attributes'));
-                        }
-                    } else {
-                        console.error('Erro ao fazer a requisição:', response.statusText);
-                        reject(new Error(`Erro ao fazer a requisição: ${response.statusText}`));
+                    let response
+                    try {
+                        response = await axios.get(url);
+                    } catch(e) {
+                        console.error('Sem dados no site.');
                     }
-                    resolve(); // Resolvendo a promessa
+                    if (response) {
+                        if (response.status === 200) {
+                            console.log("entrou")
+                            const data = response.data;
+                            if (data && Array.isArray(data.attributes)) {
+                                const attributes: Trait[] = data.attributes.map((attribute: any) =>
+                                    new Trait(attribute.trait_type, attribute.value)
+                                );
+                                nfts[i.toString()] = new Nft(i.toString(), attributes);
+                                //console.log("Atributo recuperado NFT: "+i.toString())
+                            } else {
+                                console.error('A resposta não contém o array de attributes');
+                                reject(new Error('A resposta não contém o array de attributes'));
+                            }
+                        } else {
+                            console.error('Erro ao fazer a requisição:', response.statusText);
+                            //reject(new Error(`Erro ao fazer a requisição: ${response.statusText}`));
+                        }
+                    }
+                    resolve(); // Resolvendo a promessa                                        
                 } catch (error) {                    
-                    console.error('Ocorreu um erro ao recuperar os attributes:');
+                    console.error('Ocorreu um erro ao recuperar os attributes.'+error);
                     //reject(error); // Rejeitando a promessa com o erro
                     return null
                 }
