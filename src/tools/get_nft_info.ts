@@ -87,7 +87,7 @@ async function calcRarity(collection : string) : Promise<Nft[]> {
             console.log("Fim recuperação da coleção")
             console.log("Inicando recuperação dos Atributos")
             console.log("Supply: "+supply)
-            nfts = await getAttributes(tokenUri,supply,50);
+            nfts = await getAttributes(tokenUri,supply,10);
             console.log("Fim recuperação dos Atributos")
             let traitRatiry : number = 0;
             const totalNfts = nfts.length - 1
