@@ -22,4 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+src/network/rpcs_mainnet.txt
+src/network/rpcs_testnet.txt
 src/wallet/private_keys.txt
