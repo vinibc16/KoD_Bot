@@ -45,7 +45,8 @@ client.on("messageCreate", async (message) => {
     //console.debug("START DEBUG")
     //console.log(message.channelId);    
     //console.debug("END DEBUG")
-    if (!message.content.startsWith(prefixo) || message.author.bot || !message.guild || message.channelId != "1202616180461015161") return
+    if (!message.content.startsWith(prefixo) || message.author.bot || !message.guild) return
+    if ( message.channelId != "1202616180461015161" && message.channelId != "1202605595761446942" ) return
 
     try {
         const commandId = message.content.toLowerCase().split(" ")[0].substring(prefixo.length);

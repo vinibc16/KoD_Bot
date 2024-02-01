@@ -77,7 +77,8 @@ async function getRarity(collection : string) : Promise<Nft[]> {
 async function calcRarity(collection : string) : Promise<Nft[]> {
     try {
         console.log(collection)
-        const supply = await querySupply(collection)
+        let supply = await querySupply(collection)
+        supply = supply - 1
         let nfts : Nft[]
         if(supply != "0") {
             console.log("Inicando recuperação da coleção")
