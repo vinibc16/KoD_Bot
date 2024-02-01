@@ -26,7 +26,7 @@ async function retrieveAndFilterData(siteUrl: string) {
 function extractAndFilterData(jsFileContent: string) {
     try {
         // Encontrando o valor da variável s_ usando regex
-        const regexPattern = /"pacific-1","[a-zA-Z0-9]+":"(sei1[a-zA-Z0-9]+)"/;
+        const regexPattern = /"pacific-1","[a-zA-Z0-9_]+":"(sei1[a-zA-Z0-9]+)"/;
         const matches = jsFileContent.match(regexPattern);
         if (!matches || matches.length < 2) {
             throw new Error("Valor da variável s_ não encontrado.");
@@ -41,7 +41,7 @@ function extractAndFilterData(jsFileContent: string) {
 
 function extractWLData(jsFileContent: string, group : string) : number {
     try {
-        const blockStartIndex = jsFileContent.indexOf(`"name":"${group}"`);
+        const blockStartIndex = jsFileContent.toLowerCase().indexOf(`"name":"${group.toLowerCase()}"`);
         if (blockStartIndex === -1) {
             return 0;
         }

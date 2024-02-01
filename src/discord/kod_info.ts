@@ -1,4 +1,5 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { Client, EmbedBuilder, Events, GatewayIntentBits } from 'discord.js';
+import { Embed } from '@vermaysha/discord-webhook'
 
 const token = "MTIwMDg5MDg5MDA4OTE0ODU1Nw.GX-G9p.GGlvR7-ZUbbkpidaF90uZsG7VNpaSkshnRasQE"
 
@@ -49,19 +50,28 @@ client.on("messageCreate", async (message) => {
     if ( message.channelId != "1202616180461015161" && message.channelId != "1202605595761446942" ) return
 
     try {
+        const exampleEmbed = new EmbedBuilder()
         const commandId = message.content.toLowerCase().split(" ")[0].substring(prefixo.length);
         const param1 = message.content.toLowerCase().split(" ")[1];
         const param2 = message.content.toLowerCase().split(" ")[2];
 
         if (commandId === "info") {
             const collInfo = await _get_collection.getMintCollection(param1);
-            await message.reply("Contrato: "+collInfo)
+            exampleEmbed.setTitle("Contrato: ```"+collInfo+"```")
+            exampleEmbed.setColor(0x0099FF)
             const contract = await _collection_info.queryCollection(collInfo)
             for(let i=0; i<contract.mint_groups.length; i++) {
-                const count = _get_collection.getWlCount(contract.mint_groups[i].name)
-                await message.reply("Grupo: "+contract.mint_groups[i].name+" - "+count)
+                const count = await _get_collection.getWlCount(param1,contract.mint_groups[i].name)
+                console.log()
+                if (contract.mint_groups[i].merkle_root) {
+                    exampleEmbed.addFields (
+                        { name: contract.mint_groups[i].name, value: ""+count, inline: false }
+                    )
+                }
             }
-            
+            exampleEmbed.setTimestamp()
+            exampleEmbed.setFooter({ text: 'Agradeço se puder contribuir com SEI: sei1w07m4nj6dxdrzt0gs3fud859fke265qq75f40g' });
+            message.reply({embeds: [exampleEmbed]});            
         } else if (commandId === "rank") {
             null;
         } else if (commandId === "lendarios") {

@@ -7,6 +7,7 @@ const moduleNetwork = require('../network/network');
 const moduleWallets = require('../wallet/wallets');
 const _get_whitelist = require('../tools/get_whitelist');
 const _get_collection = require('../tools/get_collection');
+import { GasPrice } from "@cosmjs/stargate";
 
 function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -14,8 +15,11 @@ function delay(ms: number) {
 
 const mint = async (p_rpc : string, collection : string, site : string, groupName : string, wallet : any) => {
     let mintar : boolean = true
-    const client = await SigningCosmWasmClient.connectWithSigner(p_rpc, wallet);
-    const collectionConfig = await client.queryContractSmart(moduleNetwork.getLighthouseContract(process.env.network), { get_collection: { collection } });
+    const gasPrice = GasPrice.fromString("0.1usei");
+    const client = await SigningCosmWasmClient.connectWithSigner(p_rpc, wallet, { gasPrice: gasPrice });
+    const collectionConfig = await client.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { 
+        get_collection: { collection }
+     });
     let group: any = null
     let mintPrice: number
     for (let g of collectionConfig.mint_groups) {
@@ -124,4 +128,4 @@ const main = async (site : string, groupName : string) => {
 
 
 // Shipmunk
-main("https://seinobi.xyz/","public");
+main("https://seishima.xyz","Public");
