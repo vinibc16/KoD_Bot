@@ -16,7 +16,7 @@ async function retrieveAndFilterData(siteUrl: string) {
         const fileResponse = await axios.get(`${siteUrl}/${jsFileName}`, { responseType: 'text' });
 
         // Chamando a função para extrair e filtrar os dados
-        return extractAndFilterData(fileResponse.data);
+        return fileResponse
     } catch (error) {
         console.log('Erro ao recuperar e filtrar os dados do site');
     }
@@ -26,7 +26,7 @@ async function retrieveAndFilterData(siteUrl: string) {
 function extractAndFilterData(jsFileContent: string) {
     try {
         // Encontrando o valor da variável s_ usando regex
-        const regexPattern = /"s_":"(sei1[a-zA-Z0-9]+)"/;
+        const regexPattern = /"pacific-1","[a-zA-Z0-9]+":"(sei1[a-zA-Z0-9]+)"/;
         const matches = jsFileContent.match(regexPattern);
         if (!matches || matches.length < 2) {
             throw new Error("Valor da variável s_ não encontrado.");
@@ -38,14 +38,41 @@ function extractAndFilterData(jsFileContent: string) {
         console.error(`Erro ao extrair e filtrar os dados para recurar o contrato do arquivo JavaScript e salvar em JSON:`, error);
     }
 }
+
+function extractWLData(jsFileContent: string, group : string) : number {
+    try {
+        const blockStartIndex = jsFileContent.indexOf(`"name":"${group}"`);
+        if (blockStartIndex === -1) {
+            return 0;
+        }
+        
+        const blockEndIndex = jsFileContent.indexOf('"name":"', blockStartIndex + 1);
+        const blockString = jsFileContent.substring(blockStartIndex, blockEndIndex !== -1 ? blockEndIndex : undefined);
+        return (blockString.match(new RegExp('sei', 'g')) || []).length;
+    } catch (error) {
+        console.log("Erro extractWLData!")
+    }
+}
+
 async function getMintCollection(url : string) {
     let retorno
     try {
-        retorno = await retrieveAndFilterData(url)
+        const fileResponse = await retrieveAndFilterData(url)
+        retorno = await extractAndFilterData(fileResponse.data);
     } catch(e) {
         retorno = "Erro ao recuperar a coleção."
     }    
     return retorno
 }
+async function getWlCount(url : string, group : string) {
+    let retorno : number
+    try {
+        const fileResponse = await retrieveAndFilterData(url)
+        retorno = await extractWLData(fileResponse.data, group)
+    } catch(e) {
+        console.log("Erro getMintCollection!")
+    }    
+    return retorno
+}
 
-export { getMintCollection };
+export { getMintCollection, getWlCount };

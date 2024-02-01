@@ -25,6 +25,4 @@ const queryCollection = async (collection: string) => {
     }
 }
 
-//queryCollection("sei1gn3lg0wfaxvwg2tmktkurs2h2uw6f5z06spwtdeg0eh0qde5uksslhfgcp")
-
 export { queryCollection }

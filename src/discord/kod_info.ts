@@ -56,6 +56,12 @@ client.on("messageCreate", async (message) => {
         if (commandId === "info") {
             const collInfo = await _get_collection.getMintCollection(param1);
             await message.reply("Contrato: "+collInfo)
+            const contract = await _collection_info.queryCollection(collInfo)
+            for(let i=0; i<contract.mint_groups.length; i++) {
+                const count = _get_collection.getWlCount(contract.mint_groups[i].name)
+                await message.reply("Grupo: "+contract.mint_groups[i].name+" - "+count)
+            }
+            
         } else if (commandId === "rank") {
             null;
         } else if (commandId === "lendarios") {
