@@ -1,41 +1,33 @@
+/* styles.css */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; /* Cor de fundo mais clara */
 }
 
-.menu {
+.sidebar {
     position: fixed;
     top: 0;
+    bottom: 0;
     left: 0;
-    width: 200px;
-    height: 100%;
-    background-color: #333;
-    color: #fff;
-    padding-top: 20px;
+    z-index: 100; /* Coloca a barra lateral sobre o conteúdo */
+    padding: 48px 0; /* Espaçamento superior e inferior */
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }
 
-.menu ul {
-    list-style-type: none;
-    padding: 0;
+.sidebar-sticky {
+    position: relative;
 }
 
-.menu ul li {
-    padding: 10px 20px;
+.nav-link {
+    color: #fff !important; /* Cor do texto dos links */
 }
 
-.menu ul li a {
-    color: #fff;
-    text-decoration: none;
+.nav-link.active {
+    font-weight: bold; /* Destaca o link ativo */
 }
 
 .content {
-    margin-left: 220px;
     padding: 20px;
+    margin-left: 240px; /* Largura da barra lateral + margem */
 }
 
-#connect-wallet {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-}
+/* Personalize conforme necessário */

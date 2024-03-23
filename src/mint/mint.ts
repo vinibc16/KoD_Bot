@@ -15,7 +15,7 @@ function delay(ms: number) {
 
 const mint = async (p_rpc : string, collection : string, site : string, groupName : string, wallet : any) => {
     let mintar : boolean = true
-    const gasPrice = GasPrice.fromString("0.1usei");
+    const gasPrice = GasPrice.fromString("0.5usei"); //GAS
     const client = await SigningCosmWasmClient.connectWithSigner(p_rpc, wallet, { gasPrice: gasPrice });
     const collectionConfig = await client.queryContractSmart(moduleNetwork.getLighthouseContract(moduleNetwork.network), { 
         get_collection: { collection }
@@ -52,7 +52,7 @@ const mint = async (p_rpc : string, collection : string, site : string, groupNam
         let hashedAddress: any = null      
 
         if (group.merkle_root !== "" && group.merkle_root !== null) {
-            _get_whitelist.retrieveAndFilterData(site,groupName);
+            //_get_whitelist.retrieveAndFilterData(site,groupName);
             let whitelist = JSON.parse(fs.readFileSync('./whiteList.json', "utf-8"))
             let hashedWallets = whitelist.map(keccak_256)
             const tree = new MerkleTree(hashedWallets, keccak_256, { sortPairs: true })  
@@ -128,4 +128,4 @@ const main = async (site : string, groupName : string) => {
 
 
 // Shipmunk
-main("https://seishima.xyz","Public");
+main("https://mint.unfrgtn.space","Public");
