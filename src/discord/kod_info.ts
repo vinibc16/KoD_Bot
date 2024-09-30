@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Events, GatewayIntentBits } from 'discord.js';
 import { Embed } from '@vermaysha/discord-webhook'
 
-const token = "MTIwMDg5MDg5MDA4OTE0ODU1Nw.GX-G9p.GGlvR7-ZUbbkpidaF90uZsG7VNpaSkshnRasQE"
+const token = ""
 
 class Nft {
     id : string
